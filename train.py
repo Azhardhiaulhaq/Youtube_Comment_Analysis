@@ -4,12 +4,13 @@ import model.constant as consts
 
 if __name__ == "__main__":
     config = Config()
-    model = SentimentEmotionSpamDetect(config)
+    print(config.spam_config.batch_size)
+    # model = SentimentEmotionSpamDetect(config)
 
     # Load Dataset
 
     # Train Spam
-    model.fit()
+    # model.fit()
 
     # Train Sentiment
 

@@ -7,6 +7,9 @@ class Config(object):
         self.sent_config = ConfigSent()
         self.emot_config = ConfigEmot()
 
+        # Word embeddings
+        self.word_dim = 100
+
 class BaseConfig(object):
     def __init__(self):
         self.batch_size = 20

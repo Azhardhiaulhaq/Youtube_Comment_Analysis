@@ -138,3 +138,5 @@ tokenizer
 
 # Test DAtaset
 dataset/Youtube*.csv
+
+*.png

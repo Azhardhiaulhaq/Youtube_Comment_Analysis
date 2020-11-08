@@ -1,3 +1,4 @@
+import re
 from model.spam import SpamModules
 import model.constant as consts
 
@@ -35,18 +36,20 @@ class SentimentEmotionSpamDetect(object):
         idx = self.get_index_module(m)
         self.modules[idx].load_model(path)
     
-    def predict_one(self, sentence,feature_extractor=None,decode=False):
+    def predict_one(self, sentence,tokenizer=None,decode=False):
         result = []
         for name, module in zip(self.config.module_name,self.modules):
             if module is not None:
-                result.append({name : module.predict_one(sentence,feature_extractor, decode)})
+                result.append({name : module.predict_one(sentence,tokenizer, decode)})
             else:
                 result.append({name : ["TODO"]})
+        return result
     
-    def predict(self, X,feature_extractor=None,decode=False):
+    def predict(self, X,tokenizer=None,decode=False):
         result = []
         for sentence in X:
-            result.append(self.predict_one(sentence,feature_extractor,decode))
+            result.append(self.predict_one(sentence,tokenizer,decode))
+        return result
     
     def save_model(self, base_filename):
         for name in self.config.module_name:
@@ -56,3 +59,11 @@ class SentimentEmotionSpamDetect(object):
         idx = self.get_index_module(m)
         if self.modules[idx] is not None:
             self.modules[idx].save_model(base_filename+m)
+    
+    def evaluate(self, X_test, y_test):
+        for module in self.modules:
+            # try:
+            if module is not None:
+                module.evaluate(X_test, y_test)
+            # except Exception:
+            #     print("Not Implemented")

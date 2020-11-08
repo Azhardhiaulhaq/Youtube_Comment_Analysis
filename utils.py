@@ -11,8 +11,21 @@ def load_dataset(path):
     return df
 
 # TODO
-def preprocess_text(sentence):
-    return sentence
+def load_tokenizer(path):
+    with open(path, 'rb') as handle:
+        Tokenizer = pickle.load(handle)
+    return Tokenizer
+
+def get_preprocessor_func(tokenizer, config):
+    return lambda t: preprocess_text(t, tokenizer, config)
+
+def preprocess_text(sentence, tokenizer=None, config=None):
+    if tokenizer is None:
+        return sentence
+    else:
+        sentence = tokenizer.texts_to_sequences(sentence)
+        sentence = pad_sequences(sentence, padding='post', maxlen=config.max_len)
+        return sentence
 
 def get_tokenizer(data_train):
     tokenizer = Tokenizer(num_words=10000)
@@ -24,7 +37,7 @@ def get_tokenizer(data_train):
 def get_spam_label(df, label ):
     return df[label]
 # return X_train, y_train, X_test, y_test (y bisa dibagi jadi y_spam_train, y_sent_train , dst)
-def prep_data(df, config,path_word_embeddings):
+def prep_data(df, config,path_word_embeddings, tokenizer_path=None):
     
     X = []
     sentence = list(df['CONTENT'])

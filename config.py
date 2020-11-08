@@ -2,7 +2,7 @@ import os
 import model.constant as m_const
 class Config(object):
     def __init__(self):
-        self.module_name = [m_const.Spam, m_const.Emotion, m_const.Spam ]
+        self.module_name = [m_const.Sentiment, m_const.Emotion, m_const.Spam]
         self.spam_config = ConfigSpam()
         self.sent_config = ConfigSent()
         self.emot_config = ConfigEmot()
@@ -22,8 +22,8 @@ class ConfigSpam(BaseConfig):
     def __init__(self):
         super(ConfigSpam, self).__init__()
         self.label = {
-            'ham' : 0,
-            'spam' : 1
+            0 : 'ham',
+            1 : 'spam'
         }
         self.rnn_cell = 'regu'
         self.hidden_size = 300

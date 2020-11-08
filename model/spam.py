@@ -23,7 +23,7 @@ class SpamModules(object):
     def init_model(self, word_embedding):
         self.model = Sequential([
             layers.Embedding(word_embedding.vocab_size, word_embedding.dim, weights=[word_embedding.embeddings_matrix], input_length=self.config.max_len, trainable=False),
-            layers.Bidirectional(layers.GRU(self.config.spam_config.hidden_size)),
+            layers.Bidirectional(layers.GRU(self.config.spam_config.hidden_size,return_sequences=False)),
             layers.Dense(1, activation='sigmoid')
         ])
         self.model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
@@ -40,26 +40,24 @@ class SpamModules(object):
         plt.legend(['Train', 'Test'], loc='upper left')
         plt.savefig('spam_loss')
     
-    def predict_one(self,X,feature_extractor=None, decode=False):
-        if feature_extractor is not None:
-            X = feature_extractor.get_features(X.split(), self.config.max_len)
+    def predict_one(self,X,tokenizer=None, decode=False):
+        if tokenizer is not None:
+            X = tokenizer(X)
         
-        scores = self.model.predict(np.asarray(X))
-        if decode:
-            return decode(self, scores)
+        scores = self.model.predict(X)
+        print(scores)
+        # if decode:
+        #     return self.decode(scores)
         return scores
 
 
     def decode(self,result):
-        if result >= self.config.threshold:
-            return 1
-        else:
-            return 0
+        return self.config.spam_config.label[result[0][0]]
 
-    def predict(self,X,feature_extractor=None,decode=False):
+    def predict(self,X,tokenizer=None,decode=False):
         result = []
         for i in range(len(X)):
-            result.append(self.predict_one(X[i], feature_extractor,decode))
+            result.append(self.predict_one(X[i], tokenizer,decode))
         return result            
 
     def save_model(self, filename):
@@ -69,9 +67,10 @@ class SpamModules(object):
         self.model = tf.keras.models.load_model(filename)
 
     def evaluate(self, X, y):
-        y_pred = self.model.predict(X)
-        self.print_evaluation("Spam Detector Evaluation",y, y_pred)
+        y_pred = self.model.predict_classes(X)
 
+        self.print_evaluation("Spam Detector Evaluation",y, y_pred)
+        
     def print_evaluation(self, task_name, y_true, y_pred):
         print(task_name)
         print("Precision : ", precision_score(y_true, y_pred, average='macro'))

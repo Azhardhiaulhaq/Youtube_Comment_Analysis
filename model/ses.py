@@ -17,7 +17,6 @@ class SentimentEmotionSpamDetect(object):
         else:
             raise ValueError(consts.UnknownModuleError)
 
-
     def init_model(self):
         for module in self.modules:
             if module is not None:
@@ -48,3 +47,11 @@ class SentimentEmotionSpamDetect(object):
         result = []
         for sentence in X:
             result.append(self.predict_one(sentence))
+    
+    def save_module(self, base_filename):
+        for name in self.config.modules:
+            self.save_module_one(base_filename, name)
+    
+    def save_module_one(self, base_filename, m):
+        idx = self.get_index_module(m)
+        self.modules[idx].save_model(base_filename+m)

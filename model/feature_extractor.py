@@ -7,14 +7,12 @@ class FeatureExtractor():
     
     def init_embedding(self, word_embeddings_model):
         embeddings_dictionary = dict()
-        
         with open(word_embeddings_model, encoding="utf8") as glove_file:
             for line in glove_file:
                 records = line.split()
                 word = records[0]
                 vector_dimensions = np.asarray(records[1:], dtype='float32')
                 embeddings_dictionary[word] = vector_dimensions
-
         return embeddings_dictionary
 
     def transform(self, tokens, max_len=None):

@@ -1,3 +1,4 @@
+import re
 import pandas as pad_sequences
 import nltk
 import numpy as np
@@ -12,23 +13,25 @@ from tensorflow.keras.models import Sequential
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelBinarizer
-from sklearn import metrics
+from sklearn.metrics import f1_score, precision_score, recall_score,confusion_matrix
 
 class SpamModules(object):
     def __init__(self,config):
         self.config = config
         self.model = None
     
-    def init_model(self):
+    def init_model(self, word_embedding):
         self.model = Sequential([
-            layers.Embedding(),
-            layers.Bidirectional(),
+            layers.Embedding(word_embedding.vocab_size, word_embedding.dim, weights=[word_embedding.embeddings_matrix], input_length=self.config.max_len, trainable=False),
+            layers.Bidirectional(layers.GRU(self.config.spam_config.hidden_size)),
             layers.Dense(1, activation='sigmoid')
         ])
         self.model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
         
-    def train(self,X_train,y_train,X_val=None,y_val=None):
-        history = self.model.fit(X_train, y_train, X_val=X_val,y_val=y_val)
+    def train(self,X_train,y_train):
+        print(X_train.shape)
+        
+        history = self.model.fit(X_train, y_train, validation_split=0.2, epochs=self.config.spam_config.epochs, batch_size=self.config.spam_config.batch_size)
         plt.plot(history.history['loss'])
         plt.plot(history.history['val_loss'])
         plt.title('Model loss')
@@ -37,14 +40,41 @@ class SpamModules(object):
         plt.legend(['Train', 'Test'], loc='upper left')
         plt.savefig('spam_loss')
     
-    def predict_one(self,sentence):
-        pass
+    def predict_one(self,X,feature_extractor=None, decode=False):
+        if feature_extractor is not None:
+            X = feature_extractor.get_features(X.split(), self.config.max_len)
+        
+        scores = self.model.predict(np.asarray(X))
+        if decode:
+            return decode(self, scores)
+        return scores
+
+
+    def decode(self,result):
+        if result >= self.config.threshold:
+            return 1
+        else:
+            return 0
+
+    def predict(self,X,feature_extractor=None,decode=False):
+        result = []
+        for i in range(len(X)):
+            result.append(self.predict_one(X[i], feature_extractor,decode))
+        return result            
 
     def save_model(self, filename):
-        pass
+        self.model.save(filename)
 
     def load_model(self, filename):
-        pass
-    
+        self.model = tf.keras.models.load_model(filename)
+
     def evaluate(self, X, y):
-        pass
+        y_pred = self.model.predict(X)
+        self.print_evaluation("Spam Detector Evaluation",y, y_pred)
+
+    def print_evaluation(self, task_name, y_true, y_pred):
+        print(task_name)
+        print("Precision : ", precision_score(y_true, y_pred, average='macro'))
+        print("Recall : ", recall_score(y_true, y_pred, average='macro'))
+        print("F1-score : ", f1_score(y_true, y_pred, average='macro'))
+        print("Confusion matrix : \n", confusion_matrix(y_true, y_pred))

@@ -128,3 +128,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Word glove embedding
+word_embeddings/*.txt
+
+# SAved model
+saved_model/*
+tokenizer
+
+# Test DAtaset
+dataset/Youtube*.csv

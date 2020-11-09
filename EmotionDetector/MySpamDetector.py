@@ -67,6 +67,7 @@ class MySpamDetector :
 
     def load_model(self,filename):
         self.model = tf.keras.models.load_model(filename)
+        self.tokenizer = self.load_tokenizer()
 
     def load_tokenizer(self):
         with open('tokenizer/tokenizer_spam', 'rb') as handle:
@@ -117,10 +118,9 @@ class MySpamDetector :
         print("Confusion matrix : \n", confusion_matrix(y_true, y_pred))
 
     def predict(self, sentence, decode=True):
-        tokenizer = self.load_tokenizer()
         if isinstance(sentence,str):
             sentence = [sentence]
-        sentence = tokenizer.texts_to_sequences([sentence])
+        sentence = self.tokenizer.texts_to_sequences([sentence])
         sentence = pad_sequences(sentence, padding='post', maxlen=self.maxlen)
         y_pred =  (self.model.predict(sentence) > 0.5).astype("int32")
         print(y_pred)

@@ -3,10 +3,19 @@ import numpy as np
 class FeatureExtractor():
     def __init__(self, config):
         self.config = config
-        self.tokenizer = None
+        self.embeddings = None
+        self.oov = None
 
-    def init_feat(self, t):
-        self.tokenizer =  None
+    def init_embedding(self, path):
+        self.embeddings = dict()
+        with open(path, encoding="utf8") as glove_file:
+            for line in glove_file:
+                records = line.split()
+                word = records[0]
+                vector_dimensions = np.asarray(records[1:], dtype='float32')
+                self.embeddings[word] = vector_dimensions
+        
+        self.oov = np.zeros(self.config.word_dim)
 
     def transform(self, tokens):
         max_len = self.config.max_len

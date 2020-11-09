@@ -22,7 +22,7 @@ class SpamModules(object):
     
     def init_model(self, word_embedding):
         self.model = Sequential([
-            layers.Embedding(word_embedding.vocab_size, word_embedding.dim, weights=[word_embedding.embeddings_matrix], input_length=self.config.max_len, trainable=False),
+            # layers.Embedding(word_embedding.vocab_size, word_embedding.dim, weights=[word_embedding.embeddings_matrix], input_length=self.config.max_len, trainable=False),
             layers.Bidirectional(layers.GRU(self.config.spam_config.hidden_size,return_sequences=False)),
             layers.Dense(1, activation='sigmoid')
         ])

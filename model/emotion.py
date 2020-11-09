@@ -8,7 +8,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Embedding, Bidirectional, Dense, GRU
 from sklearn.metrics import f1_score, precision_score, recall_score, confusion_matrix
 
-class SentimentModule(object) :
+class EmotionModule(object) :
     def __init__(self):
         self.maxlen = 100
         

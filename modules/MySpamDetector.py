@@ -108,7 +108,7 @@ class MySpamDetector :
         # Evaluation using test data
         y_pred = (self.model.predict(X_test) > 0.5).astype("int32")
         self.print_evaluation("SpamDetectorModel", y_test, y_pred)
-        self.save_model(self.model,"module/model/SpamDetectorModel")
+        self.save_model(self.model,"modules/model/SpamDetectorModel")
     
     def print_evaluation(self, task_name, y_true, y_pred):
         print(task_name)
@@ -126,6 +126,7 @@ class MySpamDetector :
         print(y_pred)
         if decode:
             y_pred = self.decode(y_pred)
+        print(y_pred)
         return y_pred
     
     def decode(self, label):

@@ -65,7 +65,7 @@ class MySentimentDetector(object) :
         return Tokenizer
 
     def load_encoder(self) :
-        with open('modules/model/tokenizer_sent.pickle', 'rb') as handle :
+        with open('modules/model/encoder_sent.pickle', 'rb') as handle :
             Encoder = pickle.load(handle)
         return Encoder
 
@@ -132,7 +132,7 @@ class MySentimentDetector(object) :
         y_pred = self.model.predict(sentence)
         y_pred = self.get_prediction(y_pred)
         sentiment = self.encoder.inverse_transform(np.array(y_pred))
-        print(sentiment)
+        return sentiment[0]
 
     def evaluate(self, X, y) :
         y_pred = self.model.predict(X)

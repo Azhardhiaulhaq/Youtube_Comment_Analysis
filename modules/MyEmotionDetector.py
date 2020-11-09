@@ -151,7 +151,7 @@ class MyEmotionDetector :
         y_pred = self.model.predict(sentence)
         y_pred = self.get_prediction(y_pred)
         emotion = self.encoder.inverse_transform(np.array(y_pred))
-        return emotion
+        return emotion[0]
 
 
 # # emotion = MyEmotionDetector()

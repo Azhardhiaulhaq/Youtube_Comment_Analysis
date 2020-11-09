@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from PIL import Image, ImageTk
-from EmotionDetector.MySES import MySES
+from modules.MySES import MySES
 
 class GUI(Frame):
 
@@ -10,11 +10,7 @@ class GUI(Frame):
         self.master = master
         self.init_GUI()
         self.model = MySES()
-        self.model.load_model([
-            "modules/model/SentimentDetectorModel.model",
-            "modules/model/EmotionDetectorModel.model",
-            "saved_model/SpamDetectorModel"
-        ])
+        self.model.load_model(["modules/model/SentimentDetectorModel", "modules/model/EmotionDetectorModel","modules/model/SpamDetectorModel"])
 
     def init_GUI(self):
         self.master.title("Youtube Sentiment Analysis")
@@ -123,16 +119,15 @@ class GUI(Frame):
         exit()
 
     def predict(self):
-        sentimen = "negative"
-        spam = "ham"
-        emotion = "Joy"
-        self.show_emotion(emotion)
-        self.show_sentimen(sentimen)
-        self.show_spam(spam)
+        # self.show_emotion(emotion)
+        # self.show_sentimen(sentimen)
+        # self.show_spam(spam)
+        text = [self.text_entry.get()]
+        print(text)
+        result = self.model.predict(text)
+        print(result)
+        self.show_sentimen(result[0]['sent'])
+        self.show_emotion(result[1]['emot'])
+        self.show_spam(result[2]['spam'])
 
-root = Tk()
 
-#size of the window
-root.geometry("800x600")
-app = GUI(root)
-root.mainloop() 

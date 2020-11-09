@@ -18,12 +18,13 @@ if __name__ == "__main__":
     print(df.shape)
     X_train, y_train, X_test, y_test, word_embed_train = utils.prep_data(df,config,glove_path)
     print(X_train.shape)
+    
     model = SentimentEmotionSpamDetect(config)
     model.init_model(word_embed_train)
     # Train Spam
     model.train(X_train,y_train, m=consts.Spam)
-    model.save_model('saved_model/coba3spam')
+
+    model.save_model('saved_model/ekspiemn1')
     model.evaluate(X_test,y_test)
     # Train Sentiment
-
     # Train Emotion

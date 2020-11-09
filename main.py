@@ -8,12 +8,13 @@ if __name__ == "__main__":
     config = Config()
     
     ses = SentimentEmotionSpamDetect(config)
-    ses.load_model('saved_model/coba2spam',consts.Spam)
+    # ses.load_model('saved_model/coba2spam',consts.Spam)
 
     tokenizer = utils.load_tokenizer('tokenizer')
 
-    text = ["Subscribe to me pleasee i beg you"]
+    text = ["These  election is the worst ever"]
     # text = utils.preprocess_text(text, tokenizer, config)
+    print(text)
     preprocess_text = utils.get_preprocessor_func(tokenizer, config)
     # print(text.shape)
     result = ses.predict_one(text,preprocess_text, decode=True)

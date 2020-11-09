@@ -43,13 +43,11 @@ class SpamModules(object):
     def predict_one(self,X,tokenizer=None, decode=False):
         if tokenizer is not None:
             X = tokenizer(X)
-        
-        scores = self.model.predict(X)
+        scores = self.model.predict_classes(X)
         print(scores)
-        # if decode:
-        #     return self.decode(scores)
+        if decode:
+            return self.decode(scores)
         return scores
-
 
     def decode(self,result):
         return self.config.spam_config.label[result[0][0]]

@@ -140,3 +140,5 @@ tokenizer
 dataset/Youtube*.csv
 
 *.png
+
+scrap.ipynb

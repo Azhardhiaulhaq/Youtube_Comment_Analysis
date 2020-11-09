@@ -58,7 +58,7 @@ class MySpamDetector :
     def get_tokenizer(self,data_train):
         tokenizer = Tokenizer(num_words=10000, oov_token=0)
         tokenizer.fit_on_texts(data_train)
-        with open('tokenizer/tokenizer_spam','wb') as handle : 
+        with open('modules/model/tokenizer_spam.pickle','wb') as handle : 
             pickle.dump(tokenizer,handle,protocol=pickle.HIGHEST_PROTOCOL)
         return tokenizer
     
@@ -70,7 +70,7 @@ class MySpamDetector :
         self.tokenizer = self.load_tokenizer()
 
     def load_tokenizer(self):
-        with open('tokenizer/tokenizer_spam', 'rb') as handle:
+        with open('modules/model/tokenizer_spam.pickle', 'rb') as handle:
             Tokenizer = pickle.load(handle)
         return Tokenizer
 
@@ -108,7 +108,7 @@ class MySpamDetector :
         # Evaluation using test data
         y_pred = (self.model.predict(X_test) > 0.5).astype("int32")
         self.print_evaluation("SpamDetectorModel", y_test, y_pred)
-        self.save_model(self.model,"saved_model/SpamDetectorModel")
+        self.save_model(self.model,"module/model/SpamDetectorModel")
     
     def print_evaluation(self, task_name, y_true, y_pred):
         print(task_name)

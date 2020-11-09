@@ -1,9 +1,10 @@
-from EmotionDetector.MyEmotionDetector import MyEmotionDetector
-from EmotionDetector.MySpamDetector import MySpamDetector
+from modules.MyEmotionDetector import MyEmotionDetector
+from modules.MySentimentDetector import MySentimentDetector
+from modules.MySpamDetector import MySpamDetector
 
 class MySES(object):
     def __init__(self):
-        self.modules = [None, None, MySpamDetector()]
+        self.modules = [MySentimentDetector(), MyEmotionDetector(), MySpamDetector()]
         self.name = ['sent', 'emot', 'spam']
 
     def train(self):
@@ -24,3 +25,6 @@ class MySES(object):
             else:
                 result.append({name : ["TODO"]})
         return result
+    
+    def train_one(self, index) :
+        self.modules[index].train()

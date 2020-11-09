@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from PIL import Image, ImageTk
+from EmotionDetector.MySES import MySES
 
 class GUI(Frame):
 
@@ -8,6 +9,12 @@ class GUI(Frame):
         Frame.__init__(self,master)
         self.master = master
         self.init_GUI()
+        self.model = MySES()
+        self.model.load_model([
+            "modules/model/SentimentDetectorModel.model",
+            "modules/model/EmotionDetectorModel.model",
+            "saved_model/SpamDetectorModel"
+        ])
 
     def init_GUI(self):
         self.master.title("Youtube Sentiment Analysis")

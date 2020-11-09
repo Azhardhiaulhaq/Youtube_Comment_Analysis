@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelBinarizer
+from tensorflow.core.framework import attr_value_pb2
 from word_embeddings.word_embeddings import WordEmbedder
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
@@ -41,6 +42,7 @@ def get_spam_label(df, label ):
     return df[label]
 # return X_train, y_train, X_test, y_test (y bisa dibagi jadi y_spam_train, y_sent_train , dst)
 # def prep_data_spam(df, tokenizer):
+#     # X
 #     return X_train, y_train, X_test, y_test
 
 # def prep_data_sent():
@@ -75,3 +77,5 @@ def prep_data(df, config,path_word_embeddings, tokenizer_path=None):
 
     return X_train, y_train, X_test, y_test, wordembedding
 
+# def tokenizer_we(X_trrain):
+    

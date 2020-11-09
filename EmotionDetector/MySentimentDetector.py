@@ -93,9 +93,9 @@ class SentimentModule(object) :
         encoder = LabelBinarizer()
         y = encoder.fit_transform(y)
 
-        print(dataset['Sentiment'])
-        print(y)
-        print('--------------')
+        # print(dataset['Sentiment'])
+        # print(y)
+        # print('--------------')
 
         # Split train and test data
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -121,23 +121,24 @@ class SentimentModule(object) :
         for pred in y_pred :
             result.append(self.get_prediction(pred))
 
-        f1 = f1_score(y_test, result, average='micro')
-        print('F1 Score:', f1)
-        self.save_model(self.model, "SentimentDetectorModel")
+        self.print_evaluation("SentimentDetectorModel", y_test,result)
 
     def predict(self, sentence) :
         self.load_model("SentimentDetectorModel")
-        tokenizer = self.get_tokenizer()
-        print(sentence)
+        tokenizer = self.load_tokenizer()
         sentence = tokenizer.texts_to_sequences(sentence)
-        print(sentence)
-        print(np.array(sentence).shape)
-        print('------')
         sentence = pad_sequences(sentence, padding='post', maxlen=self.maxlen)
         print(sentence)
         y_pred = self.model.predict(sentence)
         y_pred = self.get_prediction(y_pred)
         print(y_pred)
+
+    def print_evaluation(self, task_name, y_true, y_pred):
+        print(task_name)
+        print("Precision : ", precision_score(y_true, y_pred, average='macro'))
+        print("Recall : ", recall_score(y_true, y_pred, average='macro'))
+        print("F1-score : ", f1_score(y_true, y_pred, average='macro'))
+        print("Confusion matrix : \n", confusion_matrix(y_true, y_pred))
 
 sentiment = SentimentModule()
 sentiment.train()

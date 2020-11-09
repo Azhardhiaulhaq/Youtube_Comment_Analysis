@@ -75,7 +75,7 @@ class MySpamDetector :
 
     def train(self):
         print('-------- Initiate Trainig --------')
-        dataset = self.load_dataset("dataset/finalspam_all.csv")
+        dataset = self.load_dataset("dataset/dataset_youtube_spam.csv")
         
         X = []
         sentence = list(dataset['text'])

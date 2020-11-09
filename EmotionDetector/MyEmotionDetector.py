@@ -15,7 +15,7 @@ from keras.layers.core import Activation, Dropout, Dense
 from keras.layers import Flatten, LSTM, Bidirectional, Conv1D, GRU
 from keras.layers import GlobalMaxPooling1D, GlobalAveragePooling1D
 from keras.layers.embeddings import Embedding
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, precision_score, recall_score,confusion_matrix
 
 class MyEmotionDetector : 
     def __init__(self):
@@ -23,12 +23,12 @@ class MyEmotionDetector :
         
     def init_model(self,word_embedding):
         self.model = Sequential([
-            Embedding(self.vocab_size, 100, weights=[self.embedding_matrix], input_length=self.maxlen , trainable=False),
+            Embedding(word_embedding.vocab_size, word_embedding.dim, weights=[word_embedding.embeddings_matrix], input_length=self.maxlen, trainable=False),
             Bidirectional(GRU(200, return_sequences=True)),
             Bidirectional(GRU(200,)),
             Dense(1024, activation="relu"),
             Dense(512, activation="relu"),
-            Dense(3, activation="softmax")])
+            Dense(4, activation="softmax")])
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     def train(self,X_train,y_train):
@@ -44,16 +44,21 @@ class MyEmotionDetector :
     def predict_one(self,X,tokenizer=None, decode=False):
         if tokenizer is not None:
             X = tokenizer(X)
-        
         scores = self.model.predict(X)
         print(scores)
-        # if decode:
-        #     return self.decode(scores)
+        if decode:
+            return self.decode(scores)
         return scores
 
 
+    def get_prediction_class(self,list):
+        data = np.zeros(shape=(list.shape),dtype=int)
+        data[np.where(list == np.max(list))] = 1
+        return data.tolist()
+
     def decode(self,result):
-        return self.config.spam_config.label[result[0][0]]
+        result = self.get_prediction_class(result)
+        return result
 
     def predict(self,X,tokenizer=None,decode=False):
         result = []
@@ -68,8 +73,8 @@ class MyEmotionDetector :
         self.model = tf.keras.models.load_model(filename)
 
     def evaluate(self, X, y):
-        y_pred = self.model.predict_classes(X)
-
+        y_pred = self.model.predict(X)
+        y_pred = self.get_prediction_class(y_pred)
         self.print_evaluation("Emotion Detector Evaluation",y, y_pred)
         
     def print_evaluation(self, task_name, y_true, y_pred):
@@ -78,6 +83,7 @@ class MyEmotionDetector :
         print("Recall : ", recall_score(y_true, y_pred, average='macro'))
         print("F1-score : ", f1_score(y_true, y_pred, average='macro'))
         print("Confusion matrix : \n", confusion_matrix(y_true, y_pred))
+
 
     # def load_dataset(self,path):
     #     data = pd.read_csv(path,encoding='latin-1',names=["label","text","none"],header=None)
@@ -199,6 +205,13 @@ class MyEmotionDetector :
     #     print(y_pred)
 
 
-emotion = MyEmotionDetector()
-# emotion.train()
-emotion.predict(['I love that new comments keep adding to it actively. To know that people are listening to it, taking in the information and wisdom, some of us (like myself) keeps coming back to it too. This is such a simple life lesson and yet often so hard to learn. Its the people, not the materials, that truly counts.'])
+# emotion = MyEmotionDetector()
+# # emotion.train()
+# emotion.predict(['I love that new comments keep adding to it actively. To know that people are listening to it, taking in the information and wisdom, some of us (like myself) keeps coming back to it too. This is such a simple life lesson and yet often so hard to learn. Its the people, not the materials, that truly counts.'])
+
+# y = ['Neutral','Joy','Sad','Angry','Neutral','Joy']
+# print(y)
+# encoder = LabelBinarizer()
+# y = encoder.fit_transform(y)
+# print(y)
+# print(encoder.inverse_transform(y))

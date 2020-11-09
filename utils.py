@@ -23,8 +23,11 @@ def preprocess_text(sentence, tokenizer=None, config=None):
     if tokenizer is None:
         return sentence
     else:
+        print(sentence)
         sentence = tokenizer.texts_to_sequences(sentence)
+        print(sentence)
         sentence = pad_sequences(sentence, padding='post', maxlen=config.max_len)
+        print(sentence)
         return sentence
 
 def get_tokenizer(data_train):
@@ -37,6 +40,15 @@ def get_tokenizer(data_train):
 def get_spam_label(df, label ):
     return df[label]
 # return X_train, y_train, X_test, y_test (y bisa dibagi jadi y_spam_train, y_sent_train , dst)
+# def prep_data_spam(df, tokenizer):
+#     return X_train, y_train, X_test, y_test
+
+# def prep_data_sent():
+#     pass
+
+# def prep_data_emot():
+#     pass
+
 def prep_data(df, config,path_word_embeddings, tokenizer_path=None):
     
     X = []

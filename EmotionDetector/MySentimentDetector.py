@@ -62,6 +62,11 @@ class SentimentModule(object) :
             pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
         return tokenizer
 
+    def load_tokenizer(self) :
+        with open('tokenizer', 'rb') as handle :
+            Tokenizer = pickle.load(handle)
+        return Tokenizer
+
     def get_prediction(self, list) :
         data = np.zeros(shape=(list.shape), dtype=int)
         data[np.where(list == np.max(list))] = 1

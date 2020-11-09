@@ -140,7 +140,6 @@ tokenizer
 dataset/finalspam_all.csv
 dataset/*.txt
 
-*.png
 
 scrap.ipynb
 

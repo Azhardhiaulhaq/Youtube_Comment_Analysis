@@ -1,7 +1,9 @@
 import pandas as pd
 import nltk
+from nltk.stem import WordNetLemmatizer
 from nltk import stem
 from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize 
 import numpy as np
 import matplotlib.pyplot as plt
 import re
@@ -21,6 +23,8 @@ from sklearn.metrics import f1_score, precision_score, recall_score,confusion_ma
 class MySpamDetector : 
     def __init__(self):
         self.maxlen = 100
+        self.stopwords = set(stopwords.words('english'))
+        self.lemmatizer = WordNetLemmatizer()
     
     def load_dataset(self,path):
         data = pd.read_csv(path,encoding='latin-1')
@@ -31,11 +35,15 @@ class MySpamDetector :
     
     def preprocess_text(self,sentence):
         # lowercase
-        if isinstance(sentence, list) :
-            sentence = sentence[0].lower()
-        else :
-            sentence = sentence.lower()
+        sentence = sentence.lower()
+        word_tokens = word_tokenize(sentence)
+        filtered_sentence = [w for w in word_tokens if not w in self.stop_words]
 
+        def word_lemmatizer(words):
+            lemma_words = [self.lemmatizer.lemmatize(o) for o in words]
+            return " ".join(lemma_words)
+
+        sentence = word_lemmatizer(filtered_sentence)
         return sentence
 
     def get_embedding_matrix(self):
@@ -130,6 +138,8 @@ class MySpamDetector :
         print("Confusion matrix : \n", confusion_matrix(y_true, y_pred))
 
     def predict(self, sentence, decode=True):
+        if isinstance(sentence,str):
+            sentence = sentence[0]
         sentence = self.preprocess_text(sentence)
         if isinstance(sentence,str):
             sentence =[sentence]

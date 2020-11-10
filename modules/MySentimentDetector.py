@@ -7,7 +7,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Embedding, Bidirectional, Dense, GRU
-from sklearn.metrics import f1_score, precision_score, recall_score, multilabel_confusion_matrix
+from sklearn.metrics import f1_score, precision_score, recall_score, multilabel_confusion_matrix, classification_report
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 
@@ -143,9 +143,10 @@ class MySentimentDetector(object) :
 
     def print_evaluation(self, task_name, y_true, y_pred) :
         print(task_name)
-        print("Precision : ", precision_score(y_true, y_pred, average='macro'))
-        print("Recall : ", recall_score(y_true, y_pred, average='macro'))
-        print("F1-score : ", f1_score(y_true, y_pred, average='macro'))
+        # print("Precision : ", precision_score(y_true, y_pred, average='macro'))
+        # print("Recall : ", recall_score(y_true, y_pred, average='macro'))
+        # print("F1-score : ", f1_score(y_true, y_pred, average='macro'))
+        print("Classification Report : \n", classification_report(y_true, y_pred))
         print("Confusion matrix : \n", multilabel_confusion_matrix(y_true, y_pred))
 
 # sentiment = MySentimentDetector()

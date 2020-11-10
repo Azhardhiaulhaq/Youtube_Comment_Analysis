@@ -15,7 +15,7 @@ from keras.layers.core import Activation, Dropout, Dense
 from keras.layers import Flatten, LSTM, Bidirectional, Conv1D, GRU
 from keras.layers import GlobalMaxPooling1D, GlobalAveragePooling1D
 from keras.layers.embeddings import Embedding
-from sklearn.metrics import f1_score, precision_score, recall_score,confusion_matrix
+from sklearn.metrics import f1_score, precision_score, recall_score,confusion_matrix ,classification_report
 
 class MyEmotionDetector : 
     def __init__(self):
@@ -29,15 +29,15 @@ class MyEmotionDetector :
         result = []
         for pred in y_pred:
             result.append(self.get_prediction(pred))
-
+        
         self.print_evaluation("Emotion Detector Evaluation",y, result)
         
     def print_evaluation(self, task_name, y_true, y_pred):
         print(task_name)
-        print("Precision : ", precision_score(y_true, y_pred, average='macro'))
-        print("Recall : ", recall_score(y_true, y_pred, average='macro'))
-        print("F1-score : ", f1_score(y_true, y_pred, average='macro'))
-
+        # print("Precision : ", precision_score(y_true, y_pred, average='macro'))
+        # print("Recall : ", recall_score(y_true, y_pred, average='macro'))
+        # print("F1-score : ", f1_score(y_true, y_pred, average='macro'))
+        print("Classification Report : \n", classification_report(y_true, y_pred))
 
 
     def load_dataset(self,path):

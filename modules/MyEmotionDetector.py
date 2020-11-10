@@ -180,8 +180,8 @@ class MyEmotionDetector :
 
     
     def predict(self, sentence):
-        sentence = self.preprocess_text(sentence)
-        sentence = self.tokenizer.texts_to_sequences(sentence)
+        sentence = self.preprocess_text(sentence[0])
+        sentence = self.tokenizer.texts_to_sequences([sentence])
         sentence = pad_sequences(sentence, padding='post', maxlen=self.maxlen)
         y_pred = self.model.predict(sentence)
         y_pred = self.get_prediction(y_pred)

@@ -30,6 +30,11 @@ class MySpamDetector :
         return dataset
     
     def preprocess_text(self,sentence):
+        # lowercase
+        sentence = sentence.lower()
+
+        # lemma
+        
         return sentence
 
     def get_embedding_matrix(self):

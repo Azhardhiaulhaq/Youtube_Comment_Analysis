@@ -30,6 +30,9 @@ class MySpamDetector :
         return dataset
     
     def preprocess_text(self,sentence):
+        # lowercase
+        sentence = sentence.lower()
+
         return sentence
 
     def get_embedding_matrix(self):
@@ -130,10 +133,8 @@ class MySpamDetector :
         sentence = self.feature_extraction(sentence)
         
         y_pred =  (self.model.predict(sentence) > 0.5).astype("int32")
-        print(y_pred)
         if decode:
             y_pred = self.decode(y_pred)
-        print(y_pred)
         return y_pred
     
     def decode(self, label):

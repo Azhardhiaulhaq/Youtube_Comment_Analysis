@@ -37,7 +37,10 @@ class MySpamDetector :
         # lowercase
         sentence = sentence.lower()
         word_tokens = word_tokenize(sentence)
-        filtered_sentence = [w for w in word_tokens if not w in self.stopwords]
+
+        removed_puct = [word for word in word_tokens if word.isalnum()]
+
+        filtered_sentence = [w for w in removed_puct if not w in self.stopwords]
 
         def word_lemmatizer(words):
             lemma_words = [self.lemmatizer.lemmatize(o) for o in words]

@@ -16,6 +16,7 @@ from keras.layers import Flatten, LSTM, Bidirectional, Conv1D, GRU
 from keras.layers import GlobalMaxPooling1D, GlobalAveragePooling1D
 from keras.layers.embeddings import Embedding
 from sklearn.metrics import f1_score, precision_score, recall_score,confusion_matrix
+from emoji import UNICODE_EMOJI
 
 class MyEmotionDetector : 
     def __init__(self):
@@ -46,8 +47,47 @@ class MyEmotionDetector :
         data = data.iloc[1:]
         return data
     
+    def is_emoji(self,target_emoji,list_emoji):
+        count = 0
+        for emoji in list_emoji:
+            count += target_emoji.count(emoji)
+            if count > 1:
+                return False
+        return bool(count)
+
+    def emoji_classification(self,token):
+        joy_emoji = "👏😀😃😄😁😆😅🤣😂❤️💚🤭😘🤡💙👍😍💋 💝💖♥️❤️"
+        anger_emoji = "😠😤🤬💀☠️🙅🏼‍"
+        sad_emoji = "😥😭😢😰😓💔🤦‍😓"
+        neutral_emoji = "🤔😐😶"
+        if(self.is_emoji(token,joy_emoji)):
+            return "joy"
+        elif(self.is_emoji(token,anger_emoji)):
+            return "anger"
+        elif(self.is_emoji(token,sad_emoji)):
+            return "sad"
+        elif(self.is_emoji(token,neutral_emoji)) :
+            return "neutral"       
+        else : 
+            return token
+
+    def process_emoji(self,tokens):
+        result = []
+        for token in tokens :
+            if (token in UNICODE_EMOJI):
+                token = self.emoji_classification(token)
+                result.append(token)
+            else :
+                result.append(token.lower())
+            
+        return result
+
     def preprocess_text(self,sentence):
-        return sentence
+        sentence = sentence[0]
+        words = sentence.split()
+        words = self.process_emoji(words)
+        sentence = ' '.join(map(str,words))
+        return [sentence]
 
     def get_embedding_matrix(self):
         embeddings_dictionary = dict()
@@ -138,7 +178,8 @@ class MyEmotionDetector :
         self.embedding_matrix = self.get_embedding_matrix()
 
         self.model = self.get_model()
-        self.model.fit(X_train, y_train, batch_size=32, epochs=15, validation_split=0.2)
+        print(self.model.summary())
+        self.model.fit(X_train, y_train, batch_size=64, epochs=15, validation_split=0.1)
         self.save_model("modules/model/EmotionDetectorModel")
         self.evaluate(X_test,y_test)
 
@@ -146,6 +187,7 @@ class MyEmotionDetector :
 
     
     def predict(self, sentence):
+        sentence = self.preprocess_text(sentence)
         sentence = self.tokenizer.texts_to_sequences(sentence)
         sentence = pad_sequences(sentence, padding='post', maxlen=self.maxlen)
         y_pred = self.model.predict(sentence)
@@ -169,3 +211,17 @@ class MyEmotionDetector :
 # # # emotion.train()
 # emotion.load_model("model/EmotionDetectorModel.model")
 # emotion.predict(['Im crying seeing this'])
+
+# def is_emoji(s):
+#     emojis = "😘💙" # add more emojis here
+#     count = 0
+#     for emoji in emojis:
+#         count += s.count(emoji)
+#         if count > 1:
+#             return False
+#     return bool(count)
+
+# text = ["Recommendations are faster than notification 😂"]
+# emotion = MyEmotionDetector()
+# words = emotion.preprocess_text(text)
+# print(words)

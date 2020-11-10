@@ -12,6 +12,11 @@ class MySES(object):
             if module is not None:
                 module.train()
     
+    def summary(self):
+        for module in self.modules:
+            if module is not None:
+                module.summary()
+    
     def load_model(self, filename_list):
         for filename, module  in zip(filename_list, self.modules):
             if module is not None:

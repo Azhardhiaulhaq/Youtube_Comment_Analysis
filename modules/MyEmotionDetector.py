@@ -15,12 +15,8 @@ from keras.layers.core import Activation, Dropout, Dense
 from keras.layers import Flatten, LSTM, Bidirectional, Conv1D, GRU
 from keras.layers import GlobalMaxPooling1D, GlobalAveragePooling1D
 from keras.layers.embeddings import Embedding
-<<<<<<< HEAD
 from sklearn.metrics import f1_score, precision_score, recall_score,confusion_matrix
 from emoji import UNICODE_EMOJI
-=======
-from sklearn.metrics import f1_score, precision_score, recall_score,confusion_matrix ,classification_report
->>>>>>> 7d0a8eb25ceea89d8ea11827ab01f928bf04a40c
 
 class MyEmotionDetector : 
     def __init__(self):

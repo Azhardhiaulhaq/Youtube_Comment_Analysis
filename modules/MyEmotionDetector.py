@@ -20,12 +20,6 @@ from sklearn.metrics import f1_score, precision_score, recall_score,confusion_ma
 class MyEmotionDetector : 
     def __init__(self):
         self.maxlen = 100
-        
-    def predict(self,X,tokenizer=None,decode=False):
-        result = []
-        for i in range(len(X)):
-            result.append(self.predict_one(X[i], tokenizer,decode))
-        return result            
 
     def save_model(self, filename):
         self.model.save(filename)
@@ -85,7 +79,7 @@ class MyEmotionDetector :
     def get_tokenizer(self,data_train):
         tokenizer = Tokenizer(num_words=10000)
         tokenizer.fit_on_texts(data_train)
-        with open('EmotionDetector/model/tokenizer.pickle','wb') as handle : 
+        with open('modules/model/tokenizer_emot.pickle','wb') as handle : 
             pickle.dump(tokenizer,handle,protocol=pickle.HIGHEST_PROTOCOL)
         return tokenizer
 
@@ -100,12 +94,12 @@ class MyEmotionDetector :
         self.encoder = self.load_encoder()
 
     def load_tokenizer(self):
-        with open('EmotionDetector/model/tokenizer.pickle', 'rb') as handle:
+        with open('modules/model/tokenizer_emot.pickle', 'rb') as handle:
             Tokenizer = pickle.load(handle)
         return Tokenizer
     
     def load_encoder(self):
-        with open('EmotionDetector/model/encoder.pickle', 'rb') as handle:
+        with open('modules/model/encoder_emot.pickle', 'rb') as handle:
             Encoder = pickle.load(handle)
         return Encoder
 
@@ -117,7 +111,7 @@ class MyEmotionDetector :
         y = dataset['emotion']
         encoder = LabelBinarizer()
         y = encoder.fit_transform(y)
-        with open('EmotionDetector/model/encoder.pickle','wb') as handle : 
+        with open('modules/model/encoder_emot.pickle','wb') as handle : 
             pickle.dump(encoder,handle,protocol=pickle.HIGHEST_PROTOCOL)
 
         return X,y
@@ -132,7 +126,7 @@ class MyEmotionDetector :
         return X_train,X_test
 
     def train(self):
-        dataset = self.load_dataset('dataset/youtube_comment_dataset .csv')
+        dataset = self.load_dataset('dataset/youtube_comment_dataset.csv')
         
         print(dataset.emotion.value_counts())
         X,y = self.preprocessing(dataset)
@@ -145,7 +139,7 @@ class MyEmotionDetector :
 
         self.model = self.get_model()
         self.model.fit(X_train, y_train, batch_size=32, epochs=15, validation_split=0.2)
-        self.save_model("EmotionDetector/model/EmotionDetectorModel.model")
+        self.save_model("modules/model/EmotionDetectorModel")
         self.evaluate(X_test,y_test)
 
 
@@ -157,7 +151,7 @@ class MyEmotionDetector :
         y_pred = self.model.predict(sentence)
         y_pred = self.get_prediction(y_pred)
         emotion = self.encoder.inverse_transform(np.array(y_pred))
-        print(emotion)
+        return emotion[0]
 
 
 # # emotion = MyEmotionDetector()
@@ -172,6 +166,6 @@ class MyEmotionDetector :
 # # print(encoder.inverse_transform(y))
 
 # emotion = MyEmotionDetector()
-# # emotion.train()
-# emotion.load_model("EmotionDetector/model/EmotionDetectorModel.model")
+# # # emotion.train()
+# emotion.load_model("model/EmotionDetectorModel.model")
 # emotion.predict(['Im crying seeing this'])

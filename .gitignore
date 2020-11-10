@@ -137,10 +137,10 @@ saved_model/*
 tokenizer
 
 # Test DAtaset
-dataset/Youtube*.csv
 dataset/finalspam_all.csv
 dataset/*.txt
 
-*.png
 
 scrap.ipynb
+
+modules/model/

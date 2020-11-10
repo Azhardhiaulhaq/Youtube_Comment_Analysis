@@ -138,7 +138,7 @@ class MySpamDetector :
         print("Confusion matrix : \n", confusion_matrix(y_true, y_pred))
 
     def predict(self, sentence, decode=True):
-        if isinstance(sentence,str):
+        if isinstance(sentence,list):
             sentence = sentence[0]
         sentence = self.preprocess_text(sentence)
         if isinstance(sentence,str):

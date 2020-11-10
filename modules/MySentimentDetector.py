@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import pickle
+import re
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.models import Sequential
@@ -21,7 +22,12 @@ class MySentimentDetector(object) :
         data = data.iloc[1:]
         return data
 
+    def remove_timestamp(self, sentence) :
+        result = re.sub('\d+:\d+', '', sentence)
+        return result
+
     def preprocess_text(self, sentence) :
+        sentence = self.remove_timestamp(sentence)
         sentence = sentence.lower()
         return sentence
 

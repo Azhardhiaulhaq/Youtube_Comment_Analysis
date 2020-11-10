@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import re
 import tensorflow as tf
 import pickle
+import re
 from sklearn.utils import shuffle
 from keras.preprocessing.text import Tokenizer
 from sklearn.model_selection import train_test_split
@@ -12,10 +13,10 @@ from sklearn.preprocessing import LabelBinarizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential
 from keras.layers.core import Activation, Dropout, Dense
-from keras.layers import Flatten, LSTM, Bidirectional, Conv1D, GRU
+from keras.layers import Flatten, LSTM, Bidirectional, GRU, Conv1D,MaxPooling1D
 from keras.layers import GlobalMaxPooling1D, GlobalAveragePooling1D
 from keras.layers.embeddings import Embedding
-from sklearn.metrics import f1_score, precision_score, recall_score,confusion_matrix
+from sklearn.metrics import f1_score, precision_score, recall_score,confusion_matrix,classification_report
 from emoji import UNICODE_EMOJI
 
 class MyEmotionDetector : 
@@ -35,9 +36,9 @@ class MyEmotionDetector :
         
     def print_evaluation(self, task_name, y_true, y_pred):
         print(task_name)
-        # print("Precision : ", precision_score(y_true, y_pred, average='macro'))
-        # print("Recall : ", recall_score(y_true, y_pred, average='macro'))
-        # print("F1-score : ", f1_score(y_true, y_pred, average='macro'))
+        print("Precision : ", precision_score(y_true, y_pred, average='macro'))
+        print("Recall : ", recall_score(y_true, y_pred, average='macro'))
+        print("F1-score : ", f1_score(y_true, y_pred, average='macro'))
         print("Classification Report : \n", classification_report(y_true, y_pred))
 
 
@@ -55,39 +56,24 @@ class MyEmotionDetector :
                 return False
         return bool(count)
 
-    def emoji_classification(self,token):
+    def emoji_classification(self,sentence):
         joy_emoji = "👏😀😃😄😁😆😅🤣😂❤️💚🤭😘🤡💙👍😍💋 💝💖♥️❤️"
         anger_emoji = "😠😤🤬💀☠️🙅🏼‍"
         sad_emoji = "😥😭😢😰😓💔🤦‍😓"
-        neutral_emoji = "🤔😐😶"
-        if(self.is_emoji(token,joy_emoji)):
-            return "joy"
-        elif(self.is_emoji(token,anger_emoji)):
-            return "anger"
-        elif(self.is_emoji(token,sad_emoji)):
-            return "sad"
-        elif(self.is_emoji(token,neutral_emoji)) :
-            return "neutral"       
-        else : 
-            return token
-
-    def process_emoji(self,tokens):
-        result = []
-        for token in tokens :
-            if (token in UNICODE_EMOJI):
-                token = self.emoji_classification(token)
-                result.append(token)
-            else :
-                result.append(token.lower())
-            
-        return result
+        if(self.is_emoji(sentence,joy_emoji)):
+            sentence += " joy"
+        if(self.is_emoji(sentence,anger_emoji)):
+            sentence += " anger"
+        if(self.is_emoji(sentence,sad_emoji)):
+            sentence += " sad"      
+        
+        return sentence
 
     def preprocess_text(self,sentence):
-        sentence = sentence[0]
-        words = sentence.split()
-        words = self.process_emoji(words)
-        sentence = ' '.join(map(str,words))
-        return [sentence]
+        words = sentence.lower()
+        words = self.emoji_classification(words)
+        return words
+        # return sentence
 
     def get_embedding_matrix(self):
         embeddings_dictionary = dict()
@@ -108,9 +94,14 @@ class MyEmotionDetector :
     def get_model(self):
         model = Sequential([
             Embedding(self.vocab_size, 100, weights=[self.embedding_matrix], input_length=self.maxlen , trainable=False),
-            Bidirectional(GRU(200, return_sequences=True)),
-            Bidirectional(GRU(200,)),
-            Dense(1024, activation="relu"),
+            Conv1D(filters=32, kernel_size=3,
+                      strides=1, padding="causal",
+                      activation="relu",
+                      input_shape=[None, 4]),
+            Dropout(0.1),
+            Bidirectional(LSTM(200, return_sequences=True)),
+            Dropout(0.1),
+            Bidirectional(LSTM(100,)),
             Dense(512, activation="relu"),
             Dense(4, activation="sigmoid")])
         model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
@@ -148,6 +139,8 @@ class MyEmotionDetector :
         sentence = list(dataset['comment'])
         for sen in sentence:
             X.append(self.preprocess_text(sen))
+        print('-------')
+        print(X[29])
         y = dataset['emotion']
         encoder = LabelBinarizer()
         y = encoder.fit_transform(y)
@@ -179,7 +172,7 @@ class MyEmotionDetector :
 
         self.model = self.get_model()
         print(self.model.summary())
-        self.model.fit(X_train, y_train, batch_size=32, epochs=15, validation_split=0.1)
+        self.model.fit(X_train, y_train, batch_size=32, epochs=40, validation_split=0.1)
         self.save_model("modules/model/EmotionDetectorModel")
         self.evaluate(X_test,y_test)
 
@@ -220,6 +213,8 @@ class MyEmotionDetector :
 #         if count > 1:
 #             return False
 #     return bool(count)
+
+# print(is_emoji("Haloooo love "))
 
 # text = ["Recommendations are faster than notification 😂"]
 # emotion = MyEmotionDetector()

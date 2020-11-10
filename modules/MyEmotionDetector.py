@@ -179,7 +179,7 @@ class MyEmotionDetector :
 
         self.model = self.get_model()
         print(self.model.summary())
-        self.model.fit(X_train, y_train, batch_size=64, epochs=15, validation_split=0.1)
+        self.model.fit(X_train, y_train, batch_size=32, epochs=15, validation_split=0.1)
         self.save_model("modules/model/EmotionDetectorModel")
         self.evaluate(X_test,y_test)
 

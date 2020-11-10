@@ -33,8 +33,6 @@ class MySpamDetector :
         # lowercase
         sentence = sentence.lower()
 
-        # lemma
-        
         return sentence
 
     def get_embedding_matrix(self):

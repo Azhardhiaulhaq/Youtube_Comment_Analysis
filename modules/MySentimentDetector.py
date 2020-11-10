@@ -22,6 +22,7 @@ class MySentimentDetector(object) :
         return data
 
     def preprocess_text(self, sentence) :
+        sentence = sentence.lower()
         return sentence
 
     def get_embedding_matrix(self) :
@@ -143,11 +144,10 @@ class MySentimentDetector(object) :
 
     def print_evaluation(self, task_name, y_true, y_pred) :
         print(task_name)
-        # print("Precision : ", precision_score(y_true, y_pred, average='macro'))
-        # print("Recall : ", recall_score(y_true, y_pred, average='macro'))
-        # print("F1-score : ", f1_score(y_true, y_pred, average='macro'))
+        print("Precision : ", precision_score(y_true, y_pred, average='macro'))
+        print("Recall : ", recall_score(y_true, y_pred, average='macro'))
+        print("F1-score : ", f1_score(y_true, y_pred, average='macro'))
         print("Classification Report : \n", classification_report(y_true, y_pred))
-        print("Confusion matrix : \n", multilabel_confusion_matrix(y_true, y_pred))
 
 # sentiment = MySentimentDetector()
 # sentiment.train()

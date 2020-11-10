@@ -31,7 +31,10 @@ class MySpamDetector :
     
     def preprocess_text(self,sentence):
         # lowercase
-        sentence = sentence.lower()
+        if isinstance(sentence, list) :
+            sentence = sentence[0].lower()
+        else :
+            sentence = sentence.lower()
 
         return sentence
 

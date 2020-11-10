@@ -1,5 +1,7 @@
 import pandas as pd
 import nltk
+from nltk import stem
+from nltk.corpus import stopwords
 import numpy as np
 import matplotlib.pyplot as plt
 import re
@@ -73,6 +75,14 @@ class MySpamDetector :
         with open('tokenizer/tokenizer_spam', 'rb') as handle:
             Tokenizer = pickle.load(handle)
         return Tokenizer
+    
+    def preprocessing(self, sentence):
+        stemmer = stem.SnowballStemmer('english')
+        stopwords = set(stopwords.words('english'))
+
+        # Lowercase
+        sentence = sentence.lower()
+
 
     def train(self):
         print('-------- Initiate Trainig --------')
